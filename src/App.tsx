@@ -1,8 +1,13 @@
-import React from 'react';
+import * as React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import { Button } from 'antd';
+const { typeX } = require('@/utils/tools');
 
 function App() {
+  const info: SimpleType.Iprops = {
+    name: 'Jiangjie'
+  };
+  console.log(typeX(info));
   return (
     <div className="App">
       <header className="App-header">
@@ -18,6 +23,8 @@ function App() {
         >
           Learn React
         </a>
+        <p className="p-tag">{info.name}</p>
+        <Button type="primary">按钮</Button>
       </header>
     </div>
   );

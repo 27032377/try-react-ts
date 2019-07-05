@@ -1,4 +1,4 @@
-declare module '*.less' {
-    const less:any;
-    export = less;
-}
+// declare module '*.less' {
+//     const less:any;
+//     export = less;
+// }

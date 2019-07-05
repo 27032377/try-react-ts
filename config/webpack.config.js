@@ -36,6 +36,10 @@ const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
 
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
+// 解析路径
+const resolveIt = dir => path.join(__dirname, '..' , dir);
+// antd UI样式按需加载
+const tsImportPlugin = require('ts-import-plugin');
 
 // style files regexes
 const cssRegex = /\.css$/;
@@ -265,13 +269,24 @@ module.exports = function(webpackEnv) {
       // https://github.com/facebook/create-react-app/issues/290
       // `web` extension prefixes have been added for better support
       // for React Native Web.
+      // extensions: paths.moduleFileExtensions
+      //   .map(ext => `.${ext}`)
+      //   .filter(ext => useTypeScript || !ext.includes('ts')),
       extensions: paths.moduleFileExtensions
-        .map(ext => `.${ext}`)
-        .filter(ext => useTypeScript || !ext.includes('ts')),
+        .map(ext => `.${ext}`),
       alias: {
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
+        '@': resolveIt('/src'),
+        '@route': resolveIt('/src/routes'),
+        '@view': resolveIt('/src/views'),
+        '@component': resolveIt('/src/components'),
+        '@tool': resolveIt('/src/utils/tools'),
+        '@image': resolveIt('/src/assets/images'),
+        '@store': resolveIt('/src/store'),
+        '@style': resolveIt('/src/assets/styles'),
+        '@ns': resolveIt('/src/namespaces')
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -307,8 +322,7 @@ module.exports = function(webpackEnv) {
             {
               options: {
                 formatter: require.resolve('react-dev-utils/eslintFormatter'),
-                eslintPath: require.resolve('eslint'),
-                
+                eslintPath: require.resolve('eslint')
               },
               loader: require.resolve('eslint-loader'),
             },
@@ -388,6 +402,28 @@ module.exports = function(webpackEnv) {
                 sourceMaps: false,
               },
             },
+            {
+              test: /\.css|\.less$/,
+              use: [
+                require.resolve('style-loader'),
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: 1
+                  }
+                },
+                {
+                  loader: require.resolve('less-loader'),
+                  options: {
+                    importLoaders: 1,
+                    modifyVars: {
+                      'primary-color': '#ff0000'
+                    },
+                    javascriptEnabled: true
+                  }
+                }
+              ]
+            },
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
             // "style" loader turns CSS into JS modules that inject <style> tags.
@@ -395,87 +431,87 @@ module.exports = function(webpackEnv) {
             // to a file, but in development "style" loader enables hot editing
             // of CSS.
             // By default we support CSS Modules with the extension .module.css
-            {
-              test: cssRegex,
-              exclude: cssModuleRegex,
-              use: getStyleLoaders({
-                importLoaders: 1,
-                sourceMap: isEnvProduction && shouldUseSourceMap,
-              }),
-              // Don't consider CSS imports dead code even if the
-              // containing package claims to have no side effects.
-              // Remove this when webpack adds a warning or an error for this.
-              // See https://github.com/webpack/webpack/issues/6571
-              sideEffects: true,
-            },
+            // {
+            //   test: cssRegex,
+            //   exclude: cssModuleRegex,
+            //   use: getStyleLoaders({
+            //     importLoaders: 1,
+            //     sourceMap: isEnvProduction && shouldUseSourceMap,
+            //   }),
+            //   // Don't consider CSS imports dead code even if the
+            //   // containing package claims to have no side effects.
+            //   // Remove this when webpack adds a warning or an error for this.
+            //   // See https://github.com/webpack/webpack/issues/6571
+            //   sideEffects: true,
+            // },
             // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
             // using the extension .module.css
-            {
-              test: cssModuleRegex,
-              use: getStyleLoaders({
-                importLoaders: 1,
-                sourceMap: isEnvProduction && shouldUseSourceMap,
-                modules: true,
-                getLocalIdent: getCSSModuleLocalIdent,
-              }),
-            },
-            {
-              test: /\.less$/,
-              exclude: /\.module\.less$/,
-              use: getStyleLoaders(
-                {
-                  importLoaders: 2,
-                  souceMap: isEnvProduction && shouldUseSourceMap
-                },
-                'less-loader'
-              ),
-              sideEffects: true
-            },
-            {
-              test: /\.module\.less$/,
-              use: getStyleLoaders(
-                {
-                  importLoaders: 2,
-                  sourceMap: isEnvProduction && shouldUseRelativeAssetPaths,
-                  modules: true,
-                  getLocalIdent: getCSSModuleLocalIdent
-                },
-                'less-loader'
-              )
-            },
+            // {
+            //   test: cssModuleRegex,
+            //   use: getStyleLoaders({
+            //     importLoaders: 1,
+            //     sourceMap: isEnvProduction && shouldUseSourceMap,
+            //     modules: true,
+            //     getLocalIdent: getCSSModuleLocalIdent,
+            //   }),
+            // },
+            // {
+            //   test: /\.less$/,
+            //   exclude: /\.module\.less$/,
+            //   use: getStyleLoaders(
+            //     {
+            //       importLoaders: 2,
+            //       souceMap: isEnvProduction && shouldUseSourceMap
+            //     },
+            //     'less-loader'
+            //   ),
+            //   sideEffects: true
+            // },
+            // {
+            //   test: /\.module\.less$/,
+            //   use: getStyleLoaders(
+            //     {
+            //       importLoaders: 2,
+            //       sourceMap: isEnvProduction && shouldUseRelativeAssetPaths,
+            //       modules: true,
+            //       getLocalIdent: getCSSModuleLocalIdent
+            //     },
+            //     'less-loader'
+            //   )
+            // },
             // Opt-in support for SASS (using .scss or .sass extensions).
             // By default we support SASS Modules with the
             // extensions .module.scss or .module.sass
-            {
-              test: sassRegex,
-              exclude: sassModuleRegex,
-              use: getStyleLoaders(
-                {
-                  importLoaders: 2,
-                  sourceMap: isEnvProduction && shouldUseSourceMap,
-                },
-                'sass-loader'
-              ),
+            // {
+            //   test: sassRegex,
+            //   exclude: sassModuleRegex,
+            //   use: getStyleLoaders(
+            //     {
+            //       importLoaders: 2,
+            //       sourceMap: isEnvProduction && shouldUseSourceMap,
+            //     },
+            //     'sass-loader'
+            //   ),
               // Don't consider CSS imports dead code even if the
               // containing package claims to have no side effects.
               // Remove this when webpack adds a warning or an error for this.
               // See https://github.com/webpack/webpack/issues/6571
-              sideEffects: true,
-            },
+            //   sideEffects: true,
+            // },
             // Adds support for CSS Modules, but using SASS
             // using the extension .module.scss or .module.sass
-            {
-              test: sassModuleRegex,
-              use: getStyleLoaders(
-                {
-                  importLoaders: 2,
-                  sourceMap: isEnvProduction && shouldUseSourceMap,
-                  modules: true,
-                  getLocalIdent: getCSSModuleLocalIdent,
-                },
-                'sass-loader'
-              ),
-            },
+            // {
+            //   test: sassModuleRegex,
+            //   use: getStyleLoaders(
+            //     {
+            //       importLoaders: 2,
+            //       sourceMap: isEnvProduction && shouldUseSourceMap,
+            //       modules: true,
+            //       getLocalIdent: getCSSModuleLocalIdent,
+            //     },
+            //     'sass-loader'
+            //   ),
+            // },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
             // In production, they would get copied to the `build` folder.
@@ -496,12 +532,25 @@ module.exports = function(webpackEnv) {
             // Make sure to add the new loader(s) before the "file" loader.
           ],
         },
-        // 编译ts、tsx文件
+        // 编译ts、tsx文件，按需加载antd的样式
         {
           test: /\.ts(x?)$/,
-          use: [{
-            loader: require.resolve('ts-loader')
-          }]
+          use: [
+            {
+              loader: require.resolve('ts-loader'),
+              options: {
+                getCustomTransformers: () => ({
+                  before: [tsImportPlugin({
+                    libraryName: 'antd',
+                    libraryDirectory: 'lib',
+                    // 填写true的话使用组件的less文件
+                    // 填写css的话使用css文件，但同时不能定制主题
+                    style: true
+                  })]
+                })
+              }
+            }
+          ]
         }
       ],
     },

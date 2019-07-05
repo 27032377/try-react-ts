@@ -23,7 +23,15 @@
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@component/*": ["src/components/*"],
+      "@route/*": ["src/routes/*"],
+      "@view/*": ["src/views/*"],
+      "@tool/*": ["src/utils/tools/*"],
+      "@image/*": ["src/assets/images/*"],
+      "@store/*": ["src/store/*"],
+      "@style/*": ["src/assets/styles/*"],
+      "@ns/*": ["src/namespaces"]
     }
   },
   "exclude": ["node_modules", "dist", "build", "mock"],
