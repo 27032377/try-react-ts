@@ -1,5 +1,5 @@
 namespace SimpleType {
-  export interface Iprops {
+  export interface Name {
     name: string
   }
 }

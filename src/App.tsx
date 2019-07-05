@@ -1,33 +1,22 @@
 import * as React from 'react';
-import logo from './logo.svg';
-import { Button } from 'antd';
-const { typeX } = require('@/utils/tools');
+// import Routes from './routes/Index';
 
-function App() {
-  const info: SimpleType.Iprops = {
-    name: 'Jiangjie'
-  };
-  console.log(typeX(info));
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <p className="p-tag">{info.name}</p>
-        <Button type="primary">按钮</Button>
-      </header>
-    </div>
-  );
+const { Layout, Layout: {Header} } = require('antd');
+// interface Iprops {
+//   [route: string]: React.ReactNode
+// }
+class App extends React.Component<any, any> {
+  // constructor(props: Iprops) {
+  //   super(props);
+  // }
+  public render() {
+    return (
+      <Layout>
+        <Header></Header>
+        {this.props.children}
+      </Layout>
+    )
+  }
 }
 
 export default App;
