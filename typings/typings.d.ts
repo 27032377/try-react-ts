@@ -1,3 +1,5 @@
+import { any } from "prop-types";
+
 declare module '*.less' {
   const less: any;
   export = less;
@@ -26,4 +28,9 @@ declare module '*.tiff' {
 declare module '*.svg' {
   const svg: any;
   export = svg;
+}
+
+declare module '@*' {
+  const at: any;
+  export = at
 }

@@ -37,7 +37,7 @@ const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
 // 解析路径
-const resolveIt = dir => path.join(__dirname, '..' , dir);
+const resolveIt = dir => path.resolve(__dirname,'..', dir);
 // antd UI样式按需加载
 const tsImportPlugin = require('ts-import-plugin');
 
@@ -278,15 +278,15 @@ module.exports = function(webpackEnv) {
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
-        '@': resolveIt('/src'),
-        '@route': resolveIt('/src/routes'),
-        '@view': resolveIt('/src/views'),
-        '@component': resolveIt('/src/components'),
-        '@tool': resolveIt('/src/utils/tools'),
-        '@image': resolveIt('/src/assets/images'),
-        '@store': resolveIt('/src/store'),
-        '@style': resolveIt('/src/assets/styles'),
-        '@ns': resolveIt('/src/namespaces')
+        '@': resolveIt('src'),
+        '@route': resolveIt('src/routes'),
+        '@view': resolveIt('src/views'),
+        '@component': resolveIt('src/components'),
+        '@tool': resolveIt('src/utils/tools'),
+        '@image': resolveIt('src/assets/images'),
+        '@store': resolveIt('src/store'),
+        '@style': resolveIt('src/assets/styles'),
+        '@ns': resolveIt('src/namespaces')
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
