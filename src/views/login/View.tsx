@@ -5,7 +5,21 @@ interface Inav {
   num: number,
   nav: string
 }
-class View extends Component<any, any> {
+interface Iprops {
+  history: {
+    push: (str: string) => void
+  },
+  changeNav: (obj: object) => void,
+  active: {
+    nav: string,
+    index: number
+  }
+}
+
+class View extends Component<Iprops, any> {
+  constructor(props: any) {
+    super(props);
+  }
   private clickEv = () => {
     this.props.history.push('/');
   }
